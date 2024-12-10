@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Tarjeta Federativa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .resultado {
+            background-color: #39FF14;
+            color: black;
+            font-weight: bold;
+            font-size: 30px;
+            padding: 10px;
+            display: none;
+        }
+        .respuestas {
+            background-color: #39FF14;
+            color: black;
+            font-size: 20px;
+            padding: 10px;
+            display: none;
+        }
+        .aviso {
+            background-color: #FFFF00;
+            color: black;
+            font-size: 24px;
+            padding: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulario de Tarjeta Federativa</h1>
+    <form id="formulario">
+        <label for="nombre">Nombre y apellidos del socio:</label>
+        <input type="text" id="nombre" required><br><br>
+        
+        <label for="dni">DNI del socio:</label>
+        <input type="text" id="dni" required><br><br>
+
+        <label for="nuevoSocio">Eres nuevo socio?</label>
+        <select id="nuevoSocio" required>
+            <option value="">Elige una opción del listado</option>
+            <option value="15">Sí, 15€</option>
+            <option value="5">No, 5€</option>
+        </select><br><br>
+
+        <label for="modalidad">Modalidad:</label>
+        <select id="modalidad" required>
+            <option value="">Elige una opción del listado</option>
+            <option value="48">AU, 48€</option>
+            <option value="54">A, 54€</option>
+            <option value="69">B, 69€</option>
+            <option value="102">C, 102€</option>
+            <option value="175">D, 175€</option>
+            <option value="1000">E, 1000€</option>
+            <option value="49">B6, 49€</option>
+            <option value="61">B6FEDME, 61€</option>
+            <option value="35">OT, 35€</option>
+        </select><br><br>
+
+        <label for="suplementoBTT">Suplemento BTT:</label>
+        <select id="suplementoBTT" required>
+            <option value="">Elige una opción del listado</option>
+            <option value="15">Sí, 15€</option>
+            <option value="0">No, 0€</option>
+        </select><br><br>
+
+        <label for="suplementoSki">Suplemento Ski Alpino:</label>
+        <select id="suplementoSki" required>
+            <option value="">Elige una opción del listado</option>
+            <option value="25">Sí, 25€</option>
+            <option value="0">No, 0€</option>
+        </select><br><br>
+
+        <label for="suplementoSnowboard">Suplemento Snowboard:</label>
+        <select id="suplementoSnowboard" required>
+            <option value="">Elige una opción del listado</option>
+            <option value="35">Sí, 35€</option>
+            <option value="0">No, 0€</option>
+        </select><br><br>
+
+        <button type="button" onclick="calcular()">Calcular</button>
+    </form>
+
+    <div class="resultado" id="resultado"></div>
+    <div class="respuestas" id="respuestas"></div>
+    <div class="aviso" id="aviso">No olvides enviar captura de esta informacion a Javi</div>
+
+    <script>
+        function calcular() {
+            const nuevoSocio = parseInt(document.getElementById('nuevoSocio').value);
+            const modalidad = parseInt(document.getElementById('modalidad').value);
+            const suplementoBTT = parseInt(document.getElementById('suplementoBTT').value);
+            const suplementoSki = parseInt(document.getElementById('suplementoSki').value);
+            const suplementoSnowboard = parseInt(document.getElementById('suplementoSnowboard').value);
+
+            if (isNaN(nuevoSocio) || isNaN(modalidad) || isNaN(suplementoBTT) || isNaN(suplementoSki) || isNaN(suplementoSnowboard)) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+
+            const total = nuevoSocio + modalidad + suplementoBTT + suplementoSki + suplementoSnowboard;
+            document.getElementById('resultado').innerText = `Total: ${total} Euros`;
+            document.getElementById('resultado').style.display = 'block';
+
+            const respuestas = `
+                Nombre y apellidos: ${document.getElementById('nombre').value}
+                DNI: ${document.getElementById('dni').value}
+                Eres nuevo socio?: ${document.getElementById('nuevoSocio').options[document.getElementById('nuevoSocio').selectedIndex].text}
+                Modalidad: ${document.getElementById('modalidad').options[document.getElementById('modalidad').selectedIndex].text}
+                Suplemento BTT: ${document.getElementById('suplementoBTT').options[document.getElementById('suplementoBTT').selectedIndex].text}
+                Suplemento Ski Alpino: ${document.getElementById('suplementoSki').options[document.getElementById('suplementoSki').selectedIndex].text}
+                Suplemento Snowboard: ${document.getElementById('suplementoSnowboard').options[document.getElementById('suplementoSnowboard').selectedIndex].text}
+            `;
+            document.getElementById('respuestas').innerText = respuestas;
+            document.getElementById('respuestas').style.display = 'block';
+            document.getElementById('aviso').style.display = 'block';
+
+            // Preparar los datos para enviar
+            const data = {
+                nombre: document.getElementById("nombre").value,
+                dni: document.getElementById("dni").value,
+                nuevoSocio: document.getElementById("nuevoSocio").value,
+                modalidad: document.getElementById("modalidad").value,
+                suplementoBTT: document.getElementById("suplementoBTT").value,
+                suplementoSki: document.getElementById("suplementoSki").value,
+                suplementoSnowboard: document.getElementById("suplementoSnowboard").value
+            };
+
+            // Enviar los datos a Google Apps Script
+            fetch("https://script.google.com/macros/s/AKfycbw5MOLIadQwtb_qv_drINDxsE4d94vkij12FsFGKknrsOS8XGobgY1woaNJM7LDGaMg/exec", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
