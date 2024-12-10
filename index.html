@@ -88,25 +88,29 @@
 
     <div class="resultado" id="resultado"></div>
     <div class="respuestas" id="respuestas"></div>
-    <div class="aviso" id="aviso">No olvides enviar captura de esta informacion a Javi</div>
+    <div class="aviso" id="aviso">No olvides enviar captura de esta información a Javi</div>
 
     <script>
         function calcular() {
+            // Obtener los valores de los campos
             const nuevoSocio = parseInt(document.getElementById('nuevoSocio').value);
             const modalidad = parseInt(document.getElementById('modalidad').value);
             const suplementoBTT = parseInt(document.getElementById('suplementoBTT').value);
             const suplementoSki = parseInt(document.getElementById('suplementoSki').value);
             const suplementoSnowboard = parseInt(document.getElementById('suplementoSnowboard').value);
 
+            // Validar si se han completado todos los campos
             if (isNaN(nuevoSocio) || isNaN(modalidad) || isNaN(suplementoBTT) || isNaN(suplementoSki) || isNaN(suplementoSnowboard)) {
                 alert("Por favor, completa todos los campos.");
                 return;
             }
 
+            // Calcular el coste total
             const total = nuevoSocio + modalidad + suplementoBTT + suplementoSki + suplementoSnowboard;
             document.getElementById('resultado').innerText = `Total: ${total} Euros`;
             document.getElementById('resultado').style.display = 'block';
 
+            // Mostrar las respuestas
             const respuestas = `
                 Nombre y apellidos: ${document.getElementById('nombre').value}
                 DNI: ${document.getElementById('dni').value}
@@ -120,7 +124,7 @@
             document.getElementById('respuestas').style.display = 'block';
             document.getElementById('aviso').style.display = 'block';
 
-            // Preparar los datos para enviar
+            // Preparar los datos para enviar a Google Sheets
             const data = {
                 nombre: document.getElementById("nombre").value,
                 dni: document.getElementById("dni").value,
@@ -128,11 +132,12 @@
                 modalidad: document.getElementById("modalidad").value,
                 suplementoBTT: document.getElementById("suplementoBTT").value,
                 suplementoSki: document.getElementById("suplementoSki").value,
-                suplementoSnowboard: document.getElementById("suplementoSnowboard").value
+                suplementoSnowboard: document.getElementById("suplementoSnowboard").value,
+                total: total // Añadimos el total aquí
             };
 
-            // Enviar los datos a Google Apps Script
-            fetch("https://script.google.com/macros/s/AKfycbw5MOLIadQwtb_qv_drINDxsE4d94vkij12FsFGKknrsOS8XGobgY1woaNJM7LDGaMg/exec", {
+            // Enviar los datos al script de Google Apps
+            fetch("https://script.google.com/macros/s/AKfycbzP6QFFY1ojnk7er2AbOTm1S22hBDBfG7zubUT62tnA0k63IbJZ8PoJ1MYwmz9oqgYV/exec", {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: {
@@ -145,5 +150,6 @@
         }
     </script>
 </body>
+</html>
 </html>
 
