@@ -3,160 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Tarjeta Federativa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .resultado {
-            background-color: #39FF14;
-            color: black;
-            font-weight: bold;
-            font-size: 30px;
-            padding: 10px;
-            display: none;
-        }
-        .respuestas {
-            background-color: #39FF14;
-            color: black;
-            font-size: 20px;
-            padding: 10px;
-            display: none;
-        }
-        .aviso {
-            background-color: #FFFF00;
-            color: black;
-            font-size: 24px;
-            padding: 10px;
-            display: none;
-        }
-    </style>
+    <title>Formulario de Datos</title>
 </head>
 <body>
     <h1>Formulario de Tarjeta Federativa</h1>
     <form id="formulario">
-        <label for="nombre">Nombre y apellidos del socio:</label>
+        <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" required><br><br>
-        
-        <label for="dni">DNI del socio:</label>
+
+        <label for="dni">DNI:</label>
         <input type="text" id="dni" required><br><br>
 
         <label for="nuevoSocio">Eres nuevo socio?</label>
         <select id="nuevoSocio" required>
-            <option value="">Elige una opción del listado</option>
-            <option value="15">Sí, 15€</option>
-            <option value="5">No, 5€</option>
+            <option value="">Selecciona</option>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
         </select><br><br>
 
         <label for="modalidad">Modalidad:</label>
         <select id="modalidad" required>
-            <option value="">Elige una opción del listado</option>
-            <option value="48">AU, 48€</option>
-            <option value="54">A, 54€</option>
-            <option value="69">B, 69€</option>
-            <option value="102">C, 102€</option>
-            <option value="175">D, 175€</option>
-            <option value="1000">E, 1000€</option>
-            <option value="49">B6, 49€</option>
-            <option value="61">B6FEDME, 61€</option>
-            <option value="35">OT, 35€</option>
+            <option value="">Selecciona</option>
+            <option value="AU">AU</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
         </select><br><br>
 
-        <label for="suplementoBTT">Suplemento BTT:</label>
-        <select id="suplementoBTT" required>
-            <option value="">Elige una opción del listado</option>
-            <option value="15">Sí, 15€</option>
-            <option value="0">No, 0€</option>
-        </select><br><br>
+        <label for="suplementos">Suplementos:</label>
+        <input type="text" id="suplementos" placeholder="BTT, Ski, etc." required><br><br>
 
-        <label for="suplementoSki">Suplemento Ski Alpino:</label>
-        <select id="suplementoSki" required>
-            <option value="">Elige una opción del listado</option>
-            <option value="25">Sí, 25€</option>
-            <option value="0">No, 0€</option>
-        </select><br><br>
+        <label for="total">Total:</label>
+        <input type="number" id="total" required><br><br>
 
-        <label for="suplementoSnowboard">Suplemento Snowboard:</label>
-        <select id="suplementoSnowboard" required>
-            <option value="">Elige una opción del listado</option>
-            <option value="35">Sí, 35€</option>
-            <option value="0">No, 0€</option>
-        </select><br><br>
-
-        <button type="button" onclick="calcular()">Calcular</button>
+        <button type="button" onclick="enviarDatos()">Enviar</button>
     </form>
 
-    <div class="resultado" id="resultado"></div>
-    <div class="respuestas" id="respuestas"></div>
-    <div class="aviso" id="aviso">No olvides enviar captura de esta información a Javi</div>
+    <script>
+        function enviarDatos() {
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                dni: document.getElementById('dni').value,
+                nuevoSocio: document.getElementById('nuevoSocio').value,
+                modalidad: document.getElementById('modalidad').value,
+                suplementos: document.getElementById('suplementos').value,
+                total: document.getElementById('total').value
+            };
 
-    <!-- Incluir los scripts de Firebase -->
-    <script type="module">
-        // Importar Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js";
-
-        // Tu configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBFN9V70aaK6EPsVz-qFTRZITZD9nznbxE",
-            authDomain: "jmazaira-99186.firebaseapp.com",
-            projectId: "jmazaira-99186",
-            storageBucket: "jmazaira-99186.appspot.com",
-            messagingSenderId: "372145665475",
-            appId: "1:372145665475:web:c60cbd189fc6f5c5c33976",
-            measurementId: "G-PQLGL56B71"
-        };
-
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Función para calcular y guardar los datos
-        async function calcular() {
-            const nombre = document.getElementById('nombre').value;
-            const dni = document.getElementById('dni').value;
-            const nuevoSocio = parseInt(document.getElementById('nuevoSocio').value);
-            const modalidad = parseInt(document.getElementById('modalidad').value);
-            const suplementoBTT = parseInt(document.getElementById('suplementoBTT').value);
-            const suplementoSki = parseInt(document.getElementById('suplementoSki').value);
-            const suplementoSnowboard = parseInt(document.getElementById('suplementoSnowboard').value);
-
-            // Validar campos
-            if (isNaN(nuevoSocio) || isNaN(modalidad) || isNaN(suplementoBTT) || isNaN(suplementoSki) || isNaN(suplementoSnowboard)) {
-                alert("Por favor, completa todos los campos.");
-                return;
-            }
-
-            // Calcular el coste total
-            const total = nuevoSocio + modalidad + suplementoBTT + suplementoSki + suplementoSnowboard;
-            document.getElementById('resultado').innerText = `Total: ${total} Euros`;
-            document.getElementById('resultado').style.display = 'block';
-
-            const respuestas = `
-                Nombre y apellidos: ${nombre},
-                DNI: ${dni},
-                Eres nuevo socio?: ${document.getElementById('nuevoSocio').options[document.getElementById('nuevoSocio').selectedIndex].text},
-                Modalidad: ${document.getElementById('modalidad').options[document.getElementById('modalidad').selectedIndex].text},
-                Suplemento BTT: ${document.getElementById('suplementoBTT').options[document.getElementById('suplementoBTT').selectedIndex].text},
-                Suplemento Ski Alpino: ${document.getElementById('suplementoSki').options[document.getElementById('suplementoSki').selectedIndex].text},
-                Suplemento Snowboard: ${document.getElementById('suplementoSnowboard').options[document.getElementById('suplementoSnowboard').selectedIndex].text},
-                Coste total: ${total} Euros
-            `;
-
-            document.getElementById('respuestas').innerText = respuestas;
-            document.getElementById('respuestas').style.display = 'block';
-            document.getElementById('aviso').style.display = 'block';
-
-            // Guardar los datos en Firestore
-            try {
-                await addDoc(collection(db, "tarjetasFederativas"), {
-                    informacion: respuestas
-                });
-                alert("Datos guardados correctamente en Firebase!");
-            } catch (e) {
-                console.error("Error al guardar los datos en Firebase: ", e);
-                alert("Error al guardar los datos en Firebase.");
-            }
+            // Reemplaza 'TU_URL_DEL_SCRIPT' con la URL que obtuviste en Google Apps Script
+            fetch("https://script.google.com/macros/s/AKfycbyT1jOyExEQQvSCC6Grzi3LghGFh5pMkNmA3hjNfNDkl_1QyR_9shSZl0cyMbGYqddINw/exec", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error("Error:", error));
         }
     </script>
 </body>
