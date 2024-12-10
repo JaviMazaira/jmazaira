@@ -93,6 +93,8 @@
     <script>
         function calcular() {
             // Obtener los valores de los campos
+            const nombre = document.getElementById('nombre').value;
+            const dni = document.getElementById('dni').value;
             const nuevoSocio = parseInt(document.getElementById('nuevoSocio').value);
             const modalidad = parseInt(document.getElementById('modalidad').value);
             const suplementoBTT = parseInt(document.getElementById('suplementoBTT').value);
@@ -110,34 +112,28 @@
             document.getElementById('resultado').innerText = `Total: ${total} Euros`;
             document.getElementById('resultado').style.display = 'block';
 
-            // Mostrar las respuestas
+            // Crear un único string con toda la información
             const respuestas = `
-                Nombre y apellidos: ${document.getElementById('nombre').value}
-                DNI: ${document.getElementById('dni').value}
-                Eres nuevo socio?: ${document.getElementById('nuevoSocio').options[document.getElementById('nuevoSocio').selectedIndex].text}
-                Modalidad: ${document.getElementById('modalidad').options[document.getElementById('modalidad').selectedIndex].text}
-                Suplemento BTT: ${document.getElementById('suplementoBTT').options[document.getElementById('suplementoBTT').selectedIndex].text}
-                Suplemento Ski Alpino: ${document.getElementById('suplementoSki').options[document.getElementById('suplementoSki').selectedIndex].text}
-                Suplemento Snowboard: ${document.getElementById('suplementoSnowboard').options[document.getElementById('suplementoSnowboard').selectedIndex].text}
+                Nombre y apellidos: ${nombre},
+                DNI: ${dni},
+                Eres nuevo socio?: ${document.getElementById('nuevoSocio').options[document.getElementById('nuevoSocio').selectedIndex].text},
+                Modalidad: ${document.getElementById('modalidad').options[document.getElementById('modalidad').selectedIndex].text},
+                Suplemento BTT: ${document.getElementById('suplementoBTT').options[document.getElementById('suplementoBTT').selectedIndex].text},
+                Suplemento Ski Alpino: ${document.getElementById('suplementoSki').options[document.getElementById('suplementoSki').selectedIndex].text},
+                Suplemento Snowboard: ${document.getElementById('suplementoSnowboard').options[document.getElementById('suplementoSnowboard').selectedIndex].text},
+                Coste total: ${total} Euros
             `;
             document.getElementById('respuestas').innerText = respuestas;
             document.getElementById('respuestas').style.display = 'block';
             document.getElementById('aviso').style.display = 'block';
 
-            // Preparar los datos para enviar a Google Sheets
+            // Preparar los datos para enviar a Google Sheets (en una sola línea)
             const data = {
-                nombre: document.getElementById("nombre").value,
-                dni: document.getElementById("dni").value,
-                nuevoSocio: document.getElementById("nuevoSocio").value,
-                modalidad: document.getElementById("modalidad").value,
-                suplementoBTT: document.getElementById("suplementoBTT").value,
-                suplementoSki: document.getElementById("suplementoSki").value,
-                suplementoSnowboard: document.getElementById("suplementoSnowboard").value,
-                total: total // Añadimos el total aquí
+                informacion: respuestas // Enviamos toda la información en un solo campo
             };
 
             // Enviar los datos al script de Google Apps
-            fetch("https://script.google.com/macros/s/AKfycbzP6QFFY1ojnk7er2AbOTm1S22hBDBfG7zubUT62tnA0k63IbJZ8PoJ1MYwmz9oqgYV/exec", {
+            fetch("https://script.google.com/macros/s/AKfycbxGTvkHH3gdZN1lXnrKf8d4mm1L1mgKJ6W41XpaB6sMGPZIU6dAkpH8Dts-mbiHsNBa/exec", {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: {
@@ -151,5 +147,3 @@
     </script>
 </body>
 </html>
-</html>
-
