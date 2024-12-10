@@ -90,9 +90,29 @@
     <div class="respuestas" id="respuestas"></div>
     <div class="aviso" id="aviso">No olvides enviar captura de esta información a Javi</div>
 
-    <script>
-        function calcular() {
-            // Obtener los valores de los campos
+    <!-- Incluir los scripts de Firebase -->
+    <script type="module">
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js";
+
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFN9V70aaK6EPsVz-qFTRZITZD9nznbxE",
+            authDomain: "jmazaira-99186.firebaseapp.com",
+            projectId: "jmazaira-99186",
+            storageBucket: "jmazaira-99186.appspot.com",
+            messagingSenderId: "372145665475",
+            appId: "1:372145665475:web:c60cbd189fc6f5c5c33976",
+            measurementId: "G-PQLGL56B71"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Función para calcular y guardar los datos
+        async function calcular() {
             const nombre = document.getElementById('nombre').value;
             const dni = document.getElementById('dni').value;
             const nuevoSocio = parseInt(document.getElementById('nuevoSocio').value);
@@ -101,7 +121,7 @@
             const suplementoSki = parseInt(document.getElementById('suplementoSki').value);
             const suplementoSnowboard = parseInt(document.getElementById('suplementoSnowboard').value);
 
-            // Validar si se han completado todos los campos
+            // Validar campos
             if (isNaN(nuevoSocio) || isNaN(modalidad) || isNaN(suplementoBTT) || isNaN(suplementoSki) || isNaN(suplementoSnowboard)) {
                 alert("Por favor, completa todos los campos.");
                 return;
@@ -112,7 +132,6 @@
             document.getElementById('resultado').innerText = `Total: ${total} Euros`;
             document.getElementById('resultado').style.display = 'block';
 
-            // Crear un único string con toda la información
             const respuestas = `
                 Nombre y apellidos: ${nombre},
                 DNI: ${dni},
@@ -123,26 +142,21 @@
                 Suplemento Snowboard: ${document.getElementById('suplementoSnowboard').options[document.getElementById('suplementoSnowboard').selectedIndex].text},
                 Coste total: ${total} Euros
             `;
+
             document.getElementById('respuestas').innerText = respuestas;
             document.getElementById('respuestas').style.display = 'block';
             document.getElementById('aviso').style.display = 'block';
 
-            // Preparar los datos para enviar a Google Sheets
-            const data = {
-                informacion: respuestas // Enviamos toda la información en un solo campo
-            };
-
-            // Enviar los datos al script de Google Apps
-            fetch("https://script.google.com/macros/s/AKfycbxGTvkHH3gdZN1lXnrKf8d4mm1L1mgKJ6W41XpaB6sMGPZIU6dAkpH8Dts-mbiHsNBa/exec", {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.text())
-            .then(data => alert(data))
-            .catch(error => console.error("Error:", error));
+            // Guardar los datos en Firestore
+            try {
+                await addDoc(collection(db, "tarjetasFederativas"), {
+                    informacion: respuestas
+                });
+                alert("Datos guardados correctamente en Firebase!");
+            } catch (e) {
+                console.error("Error al guardar los datos en Firebase: ", e);
+                alert("Error al guardar los datos en Firebase.");
+            }
         }
     </script>
 </body>
